@@ -15,6 +15,11 @@ const client = new OpenAI({
     apiKey: GITHUB_TOKEN,
 })
 
+interface Panel {
+  prompt: string;
+  caption: string;
+}
+
 async function streamToBase64(stream: ReadableStream): Promise<string> {
   const reader = stream.getReader();
   const chunks: Uint8Array[] = [];
@@ -83,7 +88,7 @@ export async function POST(request: Request) {
     const panels = JSON.parse(storyData || "{}").comics;
 
     // Generate images for each panel
-    const panelsWithImages = await Promise.all(panels.map(async (panel: any) => {
+    const panelsWithImages = await Promise.all(panels.map(async (panel: Panel) => {
       const output = await replicate.run(
         "sundai-club/flux-jz-nurki:62682deb2a03f989c2ee9ef086f874ea48774605232e58b0f5e574609df20d97",
         {

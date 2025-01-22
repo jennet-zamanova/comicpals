@@ -1,6 +1,5 @@
 'use client'
 import Image from "next/image";
-import { auto } from "openai/_shims/registry.mjs";
 import { useState } from "react";
 import { Bangers, Chau_Philomene_One } from "next/font/google";
 

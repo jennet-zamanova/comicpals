@@ -1,11 +1,27 @@
 'use client'
-import Image from "next/image";
 import { useState } from "react";
+import Image from "next/image";
+import { Bangers, Chau_Philomene_One } from "next/font/google";
 
-export default function Home() {
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+type ComicPanel = {
+  image: string;
+  caption: string;
+};
+
+const bangers = Bangers({ 
+  weight: '400',
+  subsets: ['latin'],
+});
+
+const caption = Chau_Philomene_One({
+  weight: '400',
+  subsets: ['latin'],
+});
+
+export default function CreateComic() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [comicPanels, setComicPanels] = useState<ComicPanel[]>([]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -16,55 +32,50 @@ export default function Home() {
   };
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start w-full">
-        {!generatedImage && <Image
-          className="dark:invert"
-          src="/comic.jpeg"
-          alt="Comic Logo"
-          width={180}
-          height={180}
-          priority
-        />}
+    <div className="min-h-screen p-8 pb-20 sm:p-10">
+      <main className="w-4/5 mx-auto flex flex-col gap-8 items-center sm:items-start w-full">
+      <h1 className={`text-4xl sm:text-5xl font-bold sm:pl-5 tracking-wide uppercase ${bangers.className} text-gray-800`}>
+          Create a Comic
+        </h1>
+        {comicPanels.length === 0 && (
+          <div className="w-4/5 mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[...Array(3)].map((_, index) => (
+              <div key={index} className={`flex flex-col gap-4 ${index > 0 ? 'hidden md:flex' : ''}`}>
+                <div className="relative aspect-square w-full">
+                  <Image
+                    className="dark:invert opacity-50"
+                    src="/comic.jpeg"
+                    alt="Comic Logo"
+                    fill
+                    priority
+                  />
+                </div>
+                <p className={`text-center text-lg ${caption.className}`}>Example caption</p>
+              </div>
+            ))}
+          </div>
 
-        {generatedImage && (
-          <div className="mt-8">
-            <Image
-              src={generatedImage}
-              alt="Generated image"
-              width={240}
-              height={240}
-              className="rounded-lg"
-            />
+        )}
+      {comicPanels.length > 0 && (
+          <div className="w-4/5 mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+            {comicPanels.map((panel, index) => (
+              <div key={index} className="flex flex-col gap-4">
+                <div className="relative aspect-square w-full">
+                  <Image
+                    src={panel.image}
+                    alt={`Comic panel ${index + 1}`}
+                    fill
+                    className="rounded-lg object-cover"
+                    unoptimized={true}
+                  />
+                </div>
+                <p className={`text-center text-lg ${caption.className}`}>{panel.caption}</p>
+              </div>
+            ))}
           </div>
         )}
-
-        {/* <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div> */}
-
+        
+        
         <form 
           className="w-4/5 mx-auto"
           onSubmit={async (e) => {
@@ -76,7 +87,7 @@ export default function Home() {
             const prompt = formData.get('prompt');
             
             try {
-              const response = await fetch('/api/generate', {
+              const response = await fetch('/api/generate-comic', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -85,15 +96,14 @@ export default function Home() {
               });
               
               if (!response.ok) {
-                throw new Error('Failed to generate image');
+                throw new Error('Failed to generate comic');
               }
               
               const data = await response.json();
-              console.log(data.images);
-              setGeneratedImage(data.images[0]); 
+              setComicPanels(data.panels);
             } catch (error) {
               console.error('Error:', error);
-              setError('Failed to generate image. Please try again.');
+              setError('Failed to generate comic. Please try again.');
             } finally {
               setLoading(false);
             }
@@ -102,18 +112,18 @@ export default function Home() {
           <div className="flex flex-col gap-4">
             <textarea
               name="prompt"
-              className="w-full p-4 border rounded-lg resize-none h-32 dark:bg-gray-800 dark:border-gray-700"
-              placeholder="Enter your prompt here... (Press Enter to submit)"
+              className="w-full p-4 border rounded-lg resize-none h-32 border-gray-500 dark:bg-gray-800 dark:border-gray-700"
+              placeholder="Describe your comic story... (Press Enter to submit)"
               required
               disabled={loading}
               onKeyDown={handleKeyDown}
             />
             <button
               type="submit"
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-400"
+              className={`px-6 py-2 bg-gray-800 text-yellow-400 rounded-lg hover:bg-gray-900 transition-colors disabled:bg-gray-600 ${caption.className} text-xl tracking-wide`}
               disabled={loading}
             >
-              {loading ? 'Generating...' : 'Generate'}
+              {loading ? 'Generating Comic...' : 'Generate Comic'}
             </button>
           </div>
         </form>
@@ -121,7 +131,8 @@ export default function Home() {
         {error && (
           <p className="text-red-500 mt-4">{error}</p>
         )}
+
       </main>
     </div>
   );
-}
+} 

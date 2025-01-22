@@ -38,7 +38,7 @@ export default function CreateComic() {
           Create a Comic
         </h1>
         {comicPanels.length === 0 && (
-          <div className="w-4/5 mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="w-4/5 mx-auto grid grid-cols-1 md:grid-cols-3 gap-16">
             {[...Array(3)].map((_, index) => (
               <div key={index} className={`flex flex-col gap-4 ${index > 0 ? 'hidden md:flex' : ''}`}>
                 <div className="relative aspect-square w-full">
@@ -57,7 +57,7 @@ export default function CreateComic() {
 
         )}
       {comicPanels.length > 0 && (
-          <div className="w-4/5 mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+          <div className="w-4/5 mx-auto grid grid-cols-1 md:grid-cols-3 gap-16 mt-8">
             {comicPanels.map((panel, index) => (
               <div key={index} className="flex flex-col gap-4">
                 <div className="relative aspect-square w-full">

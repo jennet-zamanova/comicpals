@@ -1,8 +1,7 @@
 'use client'
 import { useState } from "react";
 import Image from "next/image";
-import { Bangers, Rubik_Mono_One, Chau_Philomene_One } from "next/font/google";
-import { auto } from "openai/_shims/registry.mjs";
+import { Bangers, Chau_Philomene_One } from "next/font/google";
 
 type ComicPanel = {
   image: string;
@@ -10,11 +9,6 @@ type ComicPanel = {
 };
 
 const bangers = Bangers({ 
-  weight: '400',
-  subsets: ['latin'],
-});
-
-const passionOne = Rubik_Mono_One({
   weight: '400',
   subsets: ['latin'],
 });

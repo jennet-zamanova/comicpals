@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 import Replicate from 'replicate';
-// Save the generated image
-import { writeFile } from "node:fs/promises";
 
 
 const replicate = new Replicate({

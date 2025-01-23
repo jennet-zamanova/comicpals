@@ -20,6 +20,8 @@ interface Panel {
   caption: string;
 }
 
+export const maxDuration = 300; // Set max duration to 300 seconds (5 minutes)
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {

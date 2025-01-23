@@ -89,9 +89,11 @@ export async function POST(request: Request) {
       };
     }));
 
-    // Save images in order
-    await Promise.all(panelsWithImages.map(async (panel, index) => {
+    // Save images sequentially to maintain order
+    for (let i = 0; i < panelsWithImages.length; i++) {
+      const panel = panelsWithImages[i];
       try {
+        console.log("Saving image with caption: ", panel.caption);
         const saveResponse = await fetch('https://sundai-backend-167199521353.us-east4.run.app/save', {
           method: 'POST',
           headers: {
@@ -103,6 +105,8 @@ export async function POST(request: Request) {
           })
         });
 
+        console.log("Saved image with caption: ", panel.caption);
+
         if (!saveResponse.ok) {
           const errorText = await saveResponse.text();
           console.error('Failed to save image:', errorText);
@@ -110,7 +114,7 @@ export async function POST(request: Request) {
       } catch (error) {
         console.error('Error saving image:', error);
       }
-    }));
+    }
 
     return NextResponse.json({ panels: panelsWithImages });
 

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Bangers, Chau_Philomene_One } from "next/font/google";
+import History from "./components/History";
 
 type ComicPanel = {
   image: string;
@@ -22,6 +23,7 @@ export default function CreateComic() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [comicPanels, setComicPanels] = useState<ComicPanel[]>([]);
+  const [limit, setLimit] = useState(3); // Default limit of 9 images
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -37,27 +39,8 @@ export default function CreateComic() {
       <h1 className={`text-4xl sm:text-5xl font-bold sm:pl-5 tracking-wide uppercase ${bangers.className} text-gray-800`}>
           Create a Comic
         </h1>
-        {comicPanels.length === 0 && (
-          <div className="w-4/5 mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[...Array(3)].map((_, index) => (
-              <div key={index} className={`flex flex-col gap-4 ${index > 0 ? 'hidden md:flex' : ''}`}>
-                <div className="relative aspect-square w-full">
-                  <Image
-                    className="dark:invert opacity-50"
-                    src="/comic.jpeg"
-                    alt="Comic Logo"
-                    fill
-                    priority
-                  />
-                </div>
-                <p className={`text-center text-lg ${caption.className}`}>Example caption</p>
-              </div>
-            ))}
-          </div>
-
-        )}
       {comicPanels.length > 0 && (
-          <div className="w-4/5 mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+          <div className="w-4/5 mx-auto grid grid-cols-1 md:grid-cols-3 gap-16 mt-8">
             {comicPanels.map((panel, index) => (
               <div key={index} className="flex flex-col gap-4">
                 <div className="relative aspect-square w-full">
@@ -77,7 +60,7 @@ export default function CreateComic() {
         
         
         <form 
-          className="w-4/5 mx-auto"
+          className="w-4/5 mx-auto mb-16"
           onSubmit={async (e) => {
             e.preventDefault();
             setLoading(true);
@@ -131,6 +114,24 @@ export default function CreateComic() {
         {error && (
           <p className="text-red-500 mt-4">{error}</p>
         )}
+
+        <div className="w-4/5 mx-auto">
+            <div className="flex justify-between items-center mb-4 w-full">
+                <h1 className={`text-3xl sm:text-4xl font-bold uppercase ${bangers.className} text-gray-800`}>Previous Comics</h1>
+                <div className="flex items-center">
+                    <input 
+                        type="number"
+                        min={1}
+                        max={5}
+                        value={limit / 3}
+                        onChange={(e) => setLimit(Number(e.target.value) * 3)}
+                        className="px-4 py-2 w-20 border rounded-lg text-gray-700 focus:outline-none focus:border-gray-500"
+                    />
+                    <span className="ml-2 text-gray-700">comics</span>
+                </div>
+            </div>
+            <History type="COMIC: " limit={limit}/>
+        </div>
 
       </main>
     </div>

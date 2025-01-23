@@ -20,7 +20,7 @@ export default function Navigation() {
     <nav className="bg-gray-800 text-white p-4">
       <div className="container mx-auto flex justify-between items-center px-4 sm:px-0">
         <Link 
-          href="/create-comic" 
+          href="/" 
           className={`hover:text-yellow-500 transition-colors ${bangers.className} text-2xl sm:text-3xl text-yellow-400`}
         >
           ComicPals
@@ -35,9 +35,9 @@ export default function Navigation() {
             Image
           </Link>
           <Link 
-            href="/create-comic" 
+            href="/" 
             className={`transition-colors ${comic.className} text-lg sm:text-xl ${
-              pathname === '/create-comic' ? 'text-yellow-400 hover:text-yellow-500' : 'text-white hover:text-gray-300'
+              pathname === '/' ? 'text-yellow-400 hover:text-yellow-500' : 'text-white hover:text-gray-300'
             }`}
           >
             Comic

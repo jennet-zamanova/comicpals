@@ -20,30 +20,6 @@ interface Panel {
   caption: string;
 }
 
-async function streamToBase64(stream: ReadableStream): Promise<string> {
-  const reader = stream.getReader();
-  const chunks: Uint8Array[] = [];
-
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      chunks.push(value);
-    }
-  } finally {
-    reader.releaseLock();
-  }
-
-  const concatenated = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
-  let position = 0;
-  for (const chunk of chunks) {
-    concatenated.set(chunk, position);
-    position += chunk.length;
-  }
-
-  const base64 = Buffer.from(concatenated).toString('base64');
-  return `data:image/webp;base64,${base64}`;
-}
 
 export async function POST(request: Request) {
   try {
@@ -101,15 +77,39 @@ export async function POST(request: Request) {
         }
       );
 
-      let imageUrl;
-      if (output && Array.isArray(output) && output[0] instanceof ReadableStream) {
-        imageUrl = await streamToBase64(output[0]);
+      let imageUrl = String(output);
+
+      if (!imageUrl) {
+        throw new Error('No image data in the response');
       }
 
       return {
         image: imageUrl,
         caption: panel.caption
       };
+    }));
+
+    // Save images in order
+    await Promise.all(panelsWithImages.map(async (panel, index) => {
+      try {
+        const saveResponse = await fetch('https://sundai-backend-167199521353.us-east4.run.app/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: `COMIC ${index + 1}: ${panel.caption}`,
+            image_url: panel.image
+          })
+        });
+
+        if (!saveResponse.ok) {
+          const errorText = await saveResponse.text();
+          console.error('Failed to save image:', errorText);
+        }
+      } catch (error) {
+        console.error('Error saving image:', error);
+      }
     }));
 
     return NextResponse.json({ panels: panelsWithImages });

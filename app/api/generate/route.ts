@@ -6,32 +6,6 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_KEY,
 });
 
-async function streamToBase64(stream: ReadableStream): Promise<string> {
-  const reader = stream.getReader();
-  const chunks: Uint8Array[] = [];
-
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      chunks.push(value);
-    }
-  } finally {
-    reader.releaseLock();
-  }
-
-  // Concatenate chunks into a single Uint8Array
-  const concatenated = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
-  let position = 0;
-  for (const chunk of chunks) {
-    concatenated.set(chunk, position);
-    position += chunk.length;
-  }
-
-  // Convert to base64
-  const base64 = Buffer.from(concatenated).toString('base64');
-  return `data:image/webp;base64,${base64}`;
-}
 
 export async function POST(request: Request) {
   try {
@@ -58,23 +32,24 @@ export async function POST(request: Request) {
       }
     );
 
-    // console.log("Image saved as output.png", output);
-    // // Convert the stream to actual image URLs
-    // const imageUrls = Array.isArray(output) ? output : [output];
-    // // await writeFile("./output.png", imageUrls[0]);
-    // Handle different possible output formats
-    let imageUrl;
-    if (output && Array.isArray(output) && output[0] instanceof ReadableStream) {
-      imageUrl = await streamToBase64(output[0]);
-    } else if (typeof output === 'string') {
-      imageUrl = output;
-    }
+    const imageUrl = String(output);
 
     if (!imageUrl) {
-      throw new Error('No image data in the response');
-    }
+        throw new Error('No image data in the response');
+      }
 
-    console.log('Processed image data URL length:', imageUrl.length);
+    const response = await fetch('https://sundai-backend-167199521353.us-east4.run.app/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            prompt: "IMAGE: " + prompt,
+            image_url: imageUrl
+        })
+        });
+
+    console.log('Processed image data URL length:', imageUrl);
 
     return NextResponse.json({ images: [imageUrl] });
 

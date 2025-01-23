@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { Bangers, Chau_Philomene_One } from "next/font/google";
+import History from '../components/History';
 
 
 const bangers = Bangers({
@@ -33,18 +34,6 @@ export default function CreateImage() {
       <h1 className={`text-4xl sm:text-5xl font-bold sm:pl-5 uppercase ${bangers.className} text-gray-800`}>
           Create an Image
         </h1>
-        {!generatedImage && (
-          <div className="w-3/5 mx-auto flex justify-center h-full">
-            <Image
-              className="dark:invert"
-              src="/comic.jpeg"
-              alt="Comic Logo"
-              width={240}
-              height={240}
-              priority
-            />
-          </div>
-        )}
 
         {generatedImage && (
           <div className="mt-8 w-3/5 mx-auto flex justify-center">
@@ -82,6 +71,7 @@ export default function CreateImage() {
               }
               
               const data = await response.json();
+              console.log("Data:", data);
               setGeneratedImage(data.images[0]); 
             } catch (error) {
               console.error('Error:', error);
@@ -113,6 +103,11 @@ export default function CreateImage() {
         {error && (
           <p className="text-red-500 mt-4">{error}</p>
         )}
+
+        <h1 className={`text-3xl sm:text-4xl font-bold sm:pl-5 uppercase ${bangers.className} text-gray-800`}>Previous Images</h1>
+        <div className="w-4/5 mx-auto">
+          <History type="IMAGE: "/>
+        </div>
       </main>
     </div>
   );

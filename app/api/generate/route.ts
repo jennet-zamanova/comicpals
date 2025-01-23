@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import Replicate from 'replicate';
 
-export const maxDuration = 300; // Set max duration to 300 seconds (5 minutes)
+export const maxDuration = 60; // Set max duration to 60 seconds (1 minute)
 export const dynamic = 'force-dynamic';
 
 const replicate = new Replicate({

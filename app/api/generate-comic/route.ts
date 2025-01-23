@@ -77,7 +77,7 @@ export async function POST(request: Request) {
         }
       );
 
-      let imageUrl = String(output);
+      const imageUrl = String(output);
 
       if (!imageUrl) {
         throw new Error('No image data in the response');
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            prompt: `COMIC ${index + 1}: ${panel.caption}`,
+            prompt: `COMIC: ${panel.caption}`,
             image_url: panel.image
           })
         });

@@ -23,6 +23,7 @@ export default function CreateComic() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [comicPanels, setComicPanels] = useState<ComicPanel[]>([]);
+  const [limit, setLimit] = useState(9); // Default limit of 9 images
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -59,7 +60,7 @@ export default function CreateComic() {
         
         
         <form 
-          className="w-4/5 mx-auto"
+          className="w-4/5 mx-auto mb-16"
           onSubmit={async (e) => {
             e.preventDefault();
             setLoading(true);
@@ -114,9 +115,22 @@ export default function CreateComic() {
           <p className="text-red-500 mt-4">{error}</p>
         )}
 
-<h1 className={`text-3xl sm:text-4xl font-bold sm:pl-5 uppercase ${bangers.className} text-gray-800`}>Previous Comics</h1>
         <div className="w-4/5 mx-auto">
-          <History type="COMIC"/>
+            <div className="flex justify-between items-center mb-4 w-full">
+                <h1 className={`text-3xl sm:text-4xl font-bold uppercase ${bangers.className} text-gray-800`}>Previous Comics</h1>
+                <div className="flex items-center">
+                    <input 
+                        type="number"
+                        min={1}
+                        max={5}
+                        value={limit / 3}
+                        onChange={(e) => setLimit(Number(e.target.value) * 3)}
+                        className="px-4 py-2 w-20 border rounded-lg text-gray-700 focus:outline-none focus:border-gray-500"
+                    />
+                    <span className="ml-2 text-gray-700">comics</span>
+                </div>
+            </div>
+            <History type="COMIC: " limit={limit}/>
         </div>
 
       </main>

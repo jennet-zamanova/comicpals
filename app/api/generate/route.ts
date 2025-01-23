@@ -38,7 +38,7 @@ export async function POST(request: Request) {
         throw new Error('No image data in the response');
       }
 
-    const response = await fetch('https://sundai-backend-167199521353.us-east4.run.app/save', {
+    await fetch('https://sundai-backend-167199521353.us-east4.run.app/save', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

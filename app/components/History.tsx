@@ -14,7 +14,7 @@ const caption = Chau_Philomene_One({
     subsets: ['latin'],
   });
 
-export default function History(props: {type: string}) {
+export default function History(props: {type: string, limit: number}) {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +30,7 @@ export default function History(props: {type: string}) {
         const filteredData = sortedData.filter((item: HistoryItem) => item.prompt.startsWith(props.type)).map((item: HistoryItem) => ({
           ...item,
           prompt: item.prompt.replace(props.type, '')
-        }));
+        })).slice(-(props.limit));
         console.log("Data:", filteredData);
         setHistory(filteredData);
         setLoading(false);
@@ -41,7 +41,7 @@ export default function History(props: {type: string}) {
     };
 
     fetchHistory();
-  }, []);
+  }, [props]); // Add limit to dependencies
 
   return (
     <>
@@ -63,7 +63,7 @@ export default function History(props: {type: string}) {
                         unoptimized={true}
                       />
                     </div>
-                    <p className="text-sm text-gray-600">{item.prompt}</p>
+                    <p className={`text-sm text-gray-600 ${caption.className}`}>{item.prompt}</p>
                   </div>
                 ))}
               </div>

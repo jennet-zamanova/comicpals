@@ -40,7 +40,15 @@ export default function Navigation() {
               pathname === '/' ? 'text-yellow-400 hover:text-yellow-500' : 'text-white hover:text-gray-300'
             }`}
           >
-            Comic
+            Nurki
+          </Link>
+          <Link 
+            href="/amelie-comic" 
+            className={`transition-colors ${comic.className} text-lg sm:text-xl ${
+              pathname === '/amelie-comic' ? 'text-yellow-400 hover:text-yellow-500' : 'text-white hover:text-gray-300'
+            }`}
+          >
+            Amelie
           </Link>
         </div>
       </div>
